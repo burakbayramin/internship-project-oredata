@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.info.License;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
@@ -30,6 +31,7 @@ import org.springframework.context.annotation.Bean;
 				url = ""
 		)
 )
+@EnableCaching
 public class BookStoreApplication {
 
 	@Bean

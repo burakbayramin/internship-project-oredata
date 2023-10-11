@@ -9,6 +9,8 @@ import com.burakbayramin.bookstore.repository.OrderRepository;
 import com.burakbayramin.bookstore.repository.UserRepository;
 import com.burakbayramin.bookstore.service.OrderService;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +40,7 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+    @CachePut(value = "orders", key = "#id")
     @Override
     public OrderDto createOrder(Long userId, OrderDto orderDto) {
 
@@ -51,6 +54,7 @@ public class OrderServiceImpl implements OrderService {
         return mapToDto(newOrder);
     }
 
+    @Cacheable(value = "orders")
     @Override
     public List<OrderDto> getAllOrdersFromUser(Long id) {
 

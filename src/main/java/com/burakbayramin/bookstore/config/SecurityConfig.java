@@ -62,6 +62,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) ->
                         authorize.requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.GET,"/**")).permitAll()
                                 .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST,"/users/**")).permitAll()
+                                .requestMatchers(mvcMatcherBuilder.pattern(HttpMethod.POST,"/api/kafka/**")).permitAll()
                                 .requestMatchers(mvcMatcherBuilder.pattern("/swagger-ui/**")).permitAll()
                                 .requestMatchers(mvcMatcherBuilder.pattern("/v3/api-docs/**")).permitAll()
                                 .anyRequest().authenticated())

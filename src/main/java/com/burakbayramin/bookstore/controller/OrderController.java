@@ -2,19 +2,24 @@ package com.burakbayramin.bookstore.controller;
 
 import com.burakbayramin.bookstore.dto.OrderDto;
 import com.burakbayramin.bookstore.service.OrderService;
+import com.burakbayramin.bookstore.service.impl.CreateOrderProducer;
+import org.apache.kafka.common.errors.ApiException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-@RestController
+@RestController("/api/v1")
 public class OrderController {
 
-    private OrderService orderService;
+    private final OrderService orderService;
+    private final CreateOrderProducer createOrderProducer;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, CreateOrderProducer createOrderProducer) {
         this.orderService = orderService;
+        this.createOrderProducer = createOrderProducer;
     }
 
     @PostMapping("/users/{id}/orders")
@@ -37,5 +42,11 @@ public class OrderController {
     ) {
         OrderDto orderDto = orderService.getOrderById(userId, orderId);
         return ResponseEntity.ok(orderDto);
+    }
+
+    @PostMapping("/orders")
+    public ResponseEntity<?> createOrder(@RequestBody OrderDto order) throws ApiException, InterruptedException, ExecutionException {
+        createOrderProducer.sendCreateOrderEvent(order);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

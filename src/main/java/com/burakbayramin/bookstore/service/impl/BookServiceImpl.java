@@ -6,20 +6,27 @@ import com.burakbayramin.bookstore.exception.ResourceNotFoundException;
 import com.burakbayramin.bookstore.repository.BookRepository;
 import com.burakbayramin.bookstore.service.BookService;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@EnableCaching
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final ModelMapper modelMapper;
 
+
     public BookServiceImpl(BookRepository bookRepository, ModelMapper modelMapper) {
         this.bookRepository = bookRepository;
         this.modelMapper = modelMapper;
+
     }
 
     private BookDto mapToDto(Book book) {
@@ -32,6 +39,7 @@ public class BookServiceImpl implements BookService {
         return book;
     }
 
+    @CachePut(value = "books", key = "#id")
     @Override
     public BookDto addBook(BookDto bookDto) {
         Book book = mapToEntity(bookDto);
@@ -39,6 +47,7 @@ public class BookServiceImpl implements BookService {
         return mapToDto(book);
     }
 
+    @Cacheable(value = "books")
     @Override
     public List<BookDto> getAllBooks() {
         List<Book> books = bookRepository.findAll();
@@ -51,6 +60,7 @@ public class BookServiceImpl implements BookService {
         return mapToDto(book);
     }
 
+    @CacheEvict(value = "books", allEntries = true)
     @Override
     public BookDto updateBook(BookDto bookDto, String id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
@@ -65,9 +75,11 @@ public class BookServiceImpl implements BookService {
         return mapToDto(updatedBook);
     }
 
+    @CacheEvict(value = "books", allEntries = true)
     @Override
     public void deleteBookById(String id) {
         Book book = bookRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
         bookRepository.delete(book);
     }
+
 }

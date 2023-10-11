@@ -1,0 +1,36 @@
+application-version: '1.0'
+application-description: Bookstore
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        globally_quoted_identifiers: 'true'
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: 'true'
+    hibernate:
+      ddl-auto: update
+  datasource:
+    username: sa
+    url: jdbc:h2:mem:bookstore_db
+    driverClassName: org.h2.Driver
+    password: password
+  h2:
+    console:
+      enabled: 'true'
+  cache:
+    type: redis
+    host: localhost
+    port: '6379'
+  kafka:
+    order:
+      bootstrap-servers: ${KAFKA_CONNECTION_BOOTSTRAP_SERVERS:localhost:9092}
+      topic:
+        create-order: create_order
+      consumer:
+        group-id:
+          notification: notification
+          service: service
+
+app-jwt-secret: 10e54776d30cffedf7789879844a87b046c5273273812b6c96da540a26776dcd
+app-jwt-expiration-milliseconds: '86400000'
