@@ -1,6 +1,9 @@
 application-version: '1.0'
 application-description: Bookstore
 
+server:
+  port : 8081
+
 spring:
   jpa:
     generate-ddl: 'true'
